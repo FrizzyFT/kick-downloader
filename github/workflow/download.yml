@@ -4,29 +4,21 @@ on:
 workflow_dispatch:
 inputs:
 vod_url:
-description: 'Paste the Kick VOD link'
+description: 'Kick VOD URL to download'
 required: true
-default: ''
 
 jobs:
-download:
+download_vod:
 runs-on: ubuntu-latest
+
 steps:
-- name: Checkout
-uses: actions/checkout@v3
-
-- name: Install yt-dlp
+- name: Download Kick VOD MP4
 run: |
-python3 -m pip install --upgrade pip
-pip install yt-dlp
+echo "Downloading Kick VOD from ${{ github.event.inputs.vod_url }}"
+wget -O kick_vod.mp4 "${{ github.event.inputs.vod_url }}"
 
-- name: Download VOD
-run: |
-mkdir -p downloads
-yt-dlp "${{ github.event.inputs.vod_url }}" -o "downloads/vod.mp4"
-
-- name: Upload MP4
+- name: Upload VOD artifact
 uses: actions/upload-artifact@v3
 with:
-name: kick-vod
-path: downloads/vod.mp4
+name: kick_vod_mp4
+path: kick_vod.mp4
